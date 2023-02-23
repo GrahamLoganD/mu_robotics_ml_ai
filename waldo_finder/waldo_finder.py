@@ -1,16 +1,26 @@
 import cv2
 import numpy
 
-img_rgb = cv2.imread('waldo_finder/find_waldo.png', cv2.IMREAD_UNCHANGED)
-img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-template = cv2.imread('waldo_finder/waldo.png', cv2.IMREAD_GRAYSCALE)
-h, w = template.shape
+COLOR_RED = (0, 0, 255)
 
-res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+image_rgb = cv2.imread(filename='waldo_finder/find_waldo.png',
+                       flags=cv2.IMREAD_ANYCOLOR)
+image_gray = cv2.cvtColor(src=image_rgb, code=cv2.COLOR_RGB2GRAY)
+template = cv2.imread(filename='waldo_finder/waldo.png',
+                      flags=cv2.IMREAD_GRAYSCALE)
+template_height, template_width = template.shape
+
+comparison = cv2.matchTemplate(image=image_gray, templ=template,
+                               method=cv2.TM_CCOEFF_NORMED)
 threshold = 0.6
 
-loc = numpy.where(res >= threshold)
-print(loc)
-for pt in zip(*loc[::-1]):
-    cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 255, 0), 2)
-cv2.imwrite('found_waldo.png', img_rgb)
+locations = numpy.where(comparison >= threshold)
+for top_left_point in zip(*locations[::-1]):
+    top_left_point_x = top_left_point[0]
+    top_left_point_y = top_left_point[1]
+    bottom_right_point_x = top_left_point_x + template_width
+    bottom_right_point_y = top_left_point_y + template_height
+    bottom_right_point = (bottom_right_point_x, bottom_right_point_y)
+    cv2.rectangle(img=image_rgb, pt1=top_left_point,
+                  pt2=bottom_right_point, color=COLOR_RED, thickness=cv2.LINE_4)
+cv2.imwrite(filename='found_waldo.png', img=image_rgb)
