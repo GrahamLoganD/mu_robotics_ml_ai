@@ -1,12 +1,15 @@
 import cv2
 import numpy
+import os
 
 COLOR_RED = (0, 0, 255)
 
-image_rgb = cv2.imread(filename='waldo_finder/find_waldo.png',
+image_dir = os.getcwd()
+
+image_rgb = cv2.imread(filename=image_dir + '/find_waldo.png',
                        flags=cv2.IMREAD_ANYCOLOR)
 image_gray = cv2.cvtColor(src=image_rgb, code=cv2.COLOR_RGB2GRAY)
-template = cv2.imread(filename='waldo_finder/waldo.png',
+template = cv2.imread(filename=image_dir + '/waldo.png',
                       flags=cv2.IMREAD_GRAYSCALE)
 template_height, template_width = template.shape
 
